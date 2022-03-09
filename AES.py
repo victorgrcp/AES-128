@@ -20,16 +20,17 @@ class AES:
         pass
     
     def add_round_key(self, nround):
-        pass
+        
+        
     
     def sub_bytes(self):
         pass
     
     def shift_rows(self):
-        
-        for i in range(1, 4):
-            for _ in range(i):
-                self.state[i,:] = np.insert(self.state[i,:-1], 0, self.state[i,-1])
+        # Shift right the row i, i times, from i=1..n
+        # Where n is the dim of the matrix, in this case n=4
+        for i in range(1,4):
+            self.state[i] = np.roll(self.state[i], i, axis=1)
     
     def mix_columns(self):
         pass
