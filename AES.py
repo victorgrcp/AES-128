@@ -21,6 +21,9 @@ class AES:
     
     def add_round_key(self, nround):
         
+        for i in range(4):
+            for j in range(4):
+                self.state[i,j] = hex(int(self.state[i,j], 0) ^ int(self.keys[nround,i,j], 0))
         
     
     def sub_bytes(self):
