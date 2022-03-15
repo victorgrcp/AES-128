@@ -64,9 +64,13 @@ class AES:
                 self.keys[nround, i + 12] = hex(int(self.keys[nround-1, 12 + i], 0) ^ int(self.keys[nround, 12 + i -1], 0))
     
             
-    def add_round_key(self, nround: int):
-        for i in range(16):
-            self.state[i] = hex(int(self.state[i], 0) ^ int(self.keys[nround, i], 0))
+    def add_round_key(self, nround: int, initKey=False):
+        if initKey:
+            for i in range(16):
+                self.state[i] = hex(int(self.state[i], 0) ^ int(self.key[i], 0))
+        else:
+            for i in range(16):
+                self.state[i] = hex(int(self.state[i], 0) ^ int(self.keys[nround, i], 0))
         
     def sub_byte(self, index: str):
         return self.s_box[ int(index, 0) ]
@@ -79,7 +83,7 @@ class AES:
     def shift_rows(self):
         # Shift right the row i, i times, from i=1..n
         for i in range(1,4):
-            self.state[i*4 : (1+i) * 4] = np.roll(self.state[i*4 : (1+i) * 4], i)
+            self.state[i*4 : (1+i) * 4] = np.roll(self.state[i*4 : (1+i) * 4], -i)
     
     def GMUL2(self, x: str):
         # Multiplicacion Galois por 2 
@@ -125,9 +129,9 @@ class AES:
     def encrypt(self):
         
         self.expand_key()
-        self.add_round_key(0)
+        self.add_round_key(0, True)
         
-        for i in range(1,9):
+        for i in range(0,9):
             self.sub_bytes()
             self.shift_rows()
             self.mix_columns()
@@ -135,7 +139,7 @@ class AES:
         
         self.sub_bytes()
         self.shift_rows()
-        self.add_round_key(9)
+        self.add_round_key(-1)
         
         self.decode_state()
         return self.c
